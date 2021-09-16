@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form>
+
+		<p:menubar>
+
+			<p:submenu label="Tareas" icon="pi pi-fw pi-calendar">
+				<p:menuitem value="Calendario" icon="pi pi-fw pi-calendar-minus"
+					outcome="/administracion/tarea/calendario" />
+			</p:submenu>
+
+			<p:divider layout="vertical" />
+			
+			<p:submenu label="Prioridades" icon="pi pi-fw pi-tags">
+				<p:menuitem value="Mis Prioridades" icon="pi pi-fw pi-tag"
+					outcome="/administracion/prioridad/prioridad" />
+			</p:submenu>
+			
+			<p:submenu label="Tipo Tarea" icon="pi pi-fw pi-paperclip">
+				<p:menuitem value="Tipo Tarea" icon="pi pi-fw paperclip"
+					outcome="/administracion/tipoTarea/tipoTarea" />
+			</p:submenu>
+
+			<f:facet name="options">
+				<div class="p-mr-2 p-d-inline" >
+					<i class="pi pi-fw pi-user p-mr-2" />
+					<p:outputLabel value="#{loginVista.cuenta.usuarioCuenta}" />
+				</div>
+
+				<p:commandButton value="Logout" icon="pi pi-fw pi-sign-out"
+					ajax="false" styleClass="ui-button-info"
+					action="#{loginVista.cmmdBtnSalir}" />
+			</f:facet>
+		</p:menubar>
+	</h:form>
+</ui:composition>

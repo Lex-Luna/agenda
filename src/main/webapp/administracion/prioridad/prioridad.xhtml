@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/template/template.xhtml">
+
+	<ui:define name="content">
+
+		<div class="card">
+			<h:form id="form-prioridad">
+				<p:growl id="growl" showDetail="true" />
+				<!--TOOLBAR-->
+				<p:toolbar id="panelMenu" styleClass="p-mb-4">
+					<p:toolbarGroup>
+						<p:commandButton
+							actionListener="#{prioridadVista.cmmdBtnPrepararItem}"
+							id="commandButton-crear" icon="pi pi-plus"
+							oncomplete="PF('wmodal').show();" process="@this"
+							styleClass="p-mr-2" update=":form-prioridad:modal" value="Nuevo" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<!--DATA TABLE-->
+				<p:dataTable id="dataTable"
+					currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+					expandableRowGroups="true" paginator="true"
+					paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					resizableColumns="true" rowIndexVar="rowIndex"
+					rowKey="#{prioridad.idPrioridad}"
+					rowsPerPageTemplate="10,25,50,100,200" rows="10"
+					rowSelectMode="add" scrollable="true" scrollHeight="450"
+					scrollWidth="auto" stripedRows="true" var="prioridad"
+					value="#{prioridadVista.prioridades}" widgetVar="wdataTable">
+
+
+					<f:facet name="header">
+						<div class="p-d-flex p-ai-center p-jc-between">
+							<span>Mis Prioridades</span>
+							<p:inputText id="globalFilter"
+								onkeyup="PF('wdataTable').filter()" style="width:20rem"
+								placeholder="Ingrese parametro de busqueda" />
+						</div>
+					</f:facet>
+
+					<p:column exportable="true" headerText="Nro."
+						styleClass="form-column-text" width="70">
+						#{rowIndex+1}
+					</p:column>
+
+					<p:column headerText="Nombre" sortBy="#{prioridad.nombrePrioridad}"
+						filterBy="#{prioridad.nombrePrioridad}"
+						filterStyle="display:none;">
+						<h:outputText value="#{prioridad.nombrePrioridad}" />
+					</p:column>
+
+					<p:column headerText="Color">
+						<h:outputText value="#{prioridad.colorPrioridad}"
+							style="background: ##{prioridad.colorPrioridad}; padding: 10px; border-radius: 5px;" />
+					</p:column>
+
+					<p:column exportable="false" styleClass="form-column-text"
+						width="100">
+						<p:commandButton
+							actionListener="#{prioridadVista.cmmdBtnPreEditar(prioridad)}"
+							icon="pi pi-pencil" oncomplete="PF('wmodal').show();"
+							process="@this"
+							styleClass="ui-button-warning rounded-button p-mr-2"
+							update=":form-prioridad:modal :form-prioridad:panelGrid-prioridad" />
+
+						<p:commandButton class="ui-button-danger rounded-button"
+							icon="pi pi-trash" onclick="PF('wdataTable').unselectAllRows();"
+							oncomplete="PF('wconfirm').show();"
+							process="@this">
+							<f:setPropertyActionListener value="#{prioridad}"
+								target="#{prioridadVista.prioridad}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog widgetVar="wmodal" header="Información Prioridad" id="modal"
+					closable="true" showEffect="fade" hideEffect="fade" modal="true"
+					width="400">
+					<p:ajax event="close" update="panelGrid-prioridad"
+						resetValues="true" />
+					<div class="ui-fluid p-mt-2" jsf:id="panelGrid-prioridad">
+						<div class="p-field p-grid">
+							<p:outputLabel for="inputText-nombre" value="Nombre: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:inputText id="inputText-nombre" maxlength="75"
+									value="#{prioridadVista.prioridad.nombrePrioridad}"
+									required="true" />
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="colorPicker-color" value="Color: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:colorPicker id="colorPicker-color" required="true"
+									value="#{prioridadVista.prioridad.colorPrioridad}" />
+							</div>
+						</div>
+
+					</div>
+					<div class="p-d-flex p-jc-between p-mt-3">
+
+						<p:commandButton id="commandButton-cancelar" icon="pi pi-times"
+							oncomplete="PF('wmodal').hide();"
+							styleClass="ui-button-secondary" value="Cancelar" process="@this"
+							resetValues="true" update="panelGrid-prioridad" />
+
+						<p:commandButton id="commandButton-guardar" icon="pi pi-save"
+							value="Guardar"
+							update=":form-prioridad:dataTable :form-prioridad:growl panelGrid-prioridad"
+							actionListener="#{prioridadVista.cmmdBtnGuardar}"
+							oncomplete="cerrarModal(PF('wmodal'), args); borrarFiltro(PF('wdataTable'),args);" />
+					</div>
+				</p:dialog>
+
+				<p:confirmDialog id="confirm" header="Mensaje de Confirmación"
+					message="Desea eliminar el registro seleccionado?" severity="warn"
+					showEffect="fade" widgetVar="wconfirm">
+					<p:commandButton actionListener="#{prioridadVista.cmmdBtnEliminar}"
+						icon="pi pi-check" id="commandButton-aceptar"
+						oncomplete="PF('wconfirm').hide(); borrarFiltro(PF('wdataTable'), args);"
+						process="@this" value="Aceptar"
+						update=":form-prioridad:dataTable :form-prioridad:growl" />
+					<p:commandButton icon="pi pi-times" id="commandButton-cancelarc"
+						onclick="PF('wconfirm').hide();" styleClass="ui-button-secondary"
+						type="button" value="Cancelar" />
+				</p:confirmDialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

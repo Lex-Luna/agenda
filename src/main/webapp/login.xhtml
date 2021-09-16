@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" lang="es">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Agenda Web</title>
+</h:head>
+
+<h:body styleClass="login-body">
+
+	<div id="login-wrapper">
+		<div id="login-container">
+
+			<p:avatar icon="pi pi-user" styleClass="p-mb-5 p-mt-2" size="xlarge"
+				shape="circle"
+				style="background-color:#2196F3; color: #ffffff; width: 5rem; height: 5rem" />
+			<h:form id="form-login">
+			<p:growl id="growl" showDetail="true"/>
+				<div class="p-grid ui-fluid">
+					<div class="p-col-12">
+						<p:inputText id="inputText-usuario" label="Usuario" placeholder="Usuario"
+							value="#{loginVista.cuenta.usuarioCuenta}" required="true" />
+					</div>
+					<div class="p-col-12">
+						<p:password id="password-clave" label="Clave" placeholder="Clave"
+							value="#{loginVista.cuenta.contraseniaCuenta}" feedback="false"
+							required="true" />
+					</div>
+					<div class="p-col-12">
+						<p:commandButton value="Ingresar" icon="pi pi-user"
+							update="form-login" action="#{loginVista.cmmdBtnIngresar}"
+							ajax="false" />
+					</div>
+					<div class="p-col-12">
+						<p:link outcome="registrar">Registrate</p:link>
+					</div>
+				</div>
+			</h:form>
+		</div>
+
+		<div class="login-footer">Agenda Web</div>
+	</div>
+
+	<h:outputStylesheet name="css/primeicons.css" library="layout" />
+	<h:outputStylesheet name="css/primeflex.min.css" library="layout" />
+	<h:outputStylesheet name="css/layout.css" library="layout" />
+</h:body>
+
+</html>

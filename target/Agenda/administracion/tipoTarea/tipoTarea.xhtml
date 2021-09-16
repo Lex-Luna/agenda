@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/template/template.xhtml">
+
+	<ui:define name="content">
+
+		<div class="card">
+			<h:form id="form-tipoTarea">
+				<p:growl id="growl" showDetail="true" />
+				<!--TOOLBAR-->
+				<p:toolbar id="panelMenu" styleClass="p-mb-4">
+					<p:toolbarGroup>
+						<p:commandButton
+							actionListener="#{tipoTareaVista.cmmdBtnPrepararItem}"
+							id="commandButton-crear" icon="pi pi-plus"
+							oncomplete="PF('wmodal').show();" process="@this"
+							styleClass="p-mr-2" update=":form-tipoTarea:modal" value="Nuevo" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<!--DATA TABLE-->
+				<p:dataTable id="dataTable"
+					currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+					expandableRowGroups="true" paginator="true"
+					paginatorPosition="bottom"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					resizableColumns="true" rowIndexVar="rowIndex"
+					rowKey="#{tipoTarea.idTipoTarea}"
+					rowsPerPageTemplate="10,25,50,100,200" rows="10"
+					rowSelectMode="add" scrollable="true" scrollHeight="450"
+					scrollWidth="auto" stripedRows="true" var="tipoTarea"
+					value="#{tipoTareaVista.tipoTareas}" widgetVar="wdataTable">
+
+
+					<f:facet name="header">
+						<div class="p-d-flex p-ai-center p-jc-between">
+							<span>Mis Tipo Tareas</span>
+							<p:inputText id="globalFilter"
+								onkeyup="PF('wdataTable').filter()" style="width:20rem"
+								placeholder="Ingrese parametro de busqueda" />
+						</div>
+					</f:facet>
+
+					<p:column exportable="true" headerText="Nro."
+						styleClass="form-column-text" width="70">
+						#{rowIndex+1}
+					</p:column>
+
+					<p:column headerText="Nombre" sortBy="#{tipoTarea.nombreTipoTarea}"
+						filterBy="#{tipoTarea.nombreTipoTarea}"
+						filterStyle="display:none;">
+						<h:outputText value="#{tipoTarea.nombreTipoTarea}" />
+					</p:column>
+
+					<p:column exportable="false" styleClass="form-column-text"
+						width="100">
+						<p:commandButton
+							actionListener="#{tipoTareaVista.cmmdBtnPreEditar(tipoTarea)}"
+							icon="pi pi-pencil" oncomplete="PF('wmodal').show();"
+							process="@this"
+							styleClass="ui-button-warning rounded-button p-mr-2"
+							update=":form-tipoTarea:modal :form-tipoTarea:panelGrid-tipoTarea" />
+
+						<p:commandButton class="ui-button-danger rounded-button"
+							icon="pi pi-trash" onclick="PF('wdataTable').unselectAllRows();"
+							oncomplete="PF('wconfirm').show();"
+							process="@this">
+							<f:setPropertyActionListener value="#{tipoTarea}"
+								target="#{tipoTareaVista.tipoTarea}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog widgetVar="wmodal" header="Información Tipo Tarea" id="modal"
+					closable="true" showEffect="fade" hideEffect="fade" modal="true"
+					width="400">
+					<p:ajax event="close" update="panelGrid-tipoTarea"
+						resetValues="true" />
+					<div class="ui-fluid p-mt-2" jsf:id="panelGrid-tipoTarea">
+						<div class="p-field p-grid">
+							<p:outputLabel for="inputText-nombre" value="Nombre: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:inputText id="inputText-nombre" maxlength="75"
+									value="#{tipoTareaVista.tipoTarea.nombreTipoTarea}"
+									required="true" />
+							</div>
+						</div>
+					</div>
+					<div class="p-d-flex p-jc-between p-mt-3">
+
+						<p:commandButton id="commandButton-cancelar" icon="pi pi-times"
+							oncomplete="PF('wmodal').hide();"
+							styleClass="ui-button-secondary" value="Cancelar" process="@this"
+							resetValues="true" update="panelGrid-tipoTarea" />
+
+						<p:commandButton id="commandButton-guardar" icon="pi pi-save"
+							value="Guardar"
+							update=":form-tipoTarea:dataTable :form-tipoTarea:growl panelGrid-tipoTarea"
+							actionListener="#{tipoTareaVista.cmmdBtnGuardar}"
+							oncomplete="cerrarModal(PF('wmodal'), args); borrarFiltro(PF('wdataTable'),args);" />
+					</div>
+				</p:dialog>
+
+				<p:confirmDialog id="confirm" header="Mensaje de Confirmación"
+					message="Desea eliminar el registro seleccionado?" severity="warn"
+					showEffect="fade" widgetVar="wconfirm">
+					<p:commandButton actionListener="#{tipoTareaVista.cmmdBtnEliminar}"
+						icon="pi pi-check" id="commandButton-aceptar"
+						oncomplete="PF('wconfirm').hide(); borrarFiltro(PF('wdataTable'), args);"
+						process="@this" value="Aceptar"
+						update=":form-tipoTarea:dataTable :form-tipoTarea:growl" />
+					<p:commandButton icon="pi pi-times" id="commandButton-cancelarc"
+						onclick="PF('wconfirm').hide();" styleClass="ui-button-secondary"
+						type="button" value="Cancelar" />
+				</p:confirmDialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

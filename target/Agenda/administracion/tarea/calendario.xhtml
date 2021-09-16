@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/template/template.xhtml">
+
+	<ui:define name="content">
+
+		<div class="card">
+			<h:form id="form-tarea">
+				<p:growl id="growl" showDetail="true" />
+
+				<p:schedule id="schedule" value="#{tareaVista.calendario}"
+					widgetVar="wschedule">
+					<p:ajax event="dateSelect"
+						listener="#{tareaVista.evtSeleccionarFecha}"
+						update="panelGrid-tarea" oncomplete="PF('wdialog-tarea').show();" />
+
+					<p:ajax event="eventSelect"
+						listener="#{tareaVista.evtSeleccionarTarea}"
+						update="panelGrid-tarea" oncomplete="PF('wdialog-tarea').show();" />
+				</p:schedule>
+
+				<p:dialog widgetVar="wdialog-tarea" header="Información Tarea"
+					showEffect="fade" hideEffect="fade" modal="true" width="600">
+
+					<div class="ui-fluid p-mt-2" jsf:id="panelGrid-tarea">
+						<div class="p-field p-grid">
+							<p:outputLabel for="inputText-titulo" value="Titulo: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:inputText id="inputText-titulo" maxlength="75"
+									value="#{tareaVista.tarea.title}" required="true" />
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="dataPicket-fechaInicio"
+								value="Fecha Inicio: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:datePicker id="dataPicket-fechaInicio"
+									value="#{tareaVista.tarea.startDate}" pattern="dd/MM/yyyy"
+									showTime="true" appendTo="@(body)" />
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="dataPicker-fechaFin" value="Fecha Fin:"
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:datePicker id="dataPicker-fechaFin"
+									value="#{tareaVista.tarea.endDate}" pattern="dd/MM/yyyy"
+									showTime="true" appendTo="@(body)" />
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="selectOneMenu-prioridad" value="Prioridad: "
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:selectOneMenu converter="omnifaces.SelectItemsConverter"
+									filter="true" filterMatchMode="startsWith"
+									id="selectOneMenu-prioridad"
+									value="#{tareaVista.prioridad}"
+									required="true">
+
+									<f:selectItem itemLabel="Seleccione" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItems itemLabel="#{prioridad.nombrePrioridad}"
+										value="#{prioridadVista.prioridades}" var="prioridad" />
+								</p:selectOneMenu>
+							</div>
+						</div>
+						
+						<div class="p-field p-grid">
+							<p:outputLabel for="selectOneMenu-tipoTarea" value="Tipo Tarea:"
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:selectOneMenu converter="omnifaces.SelectItemsConverter"
+									filter="true" filterMatchMode="startsWith"
+									id="selectOneMenu-tipoTarea"
+									value="#{tareaVista.tipoTarea}"
+									required="true">
+
+									<f:selectItem itemLabel="Seleccione" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItems itemLabel="#{tipoTarea.nombreTipoTarea}"
+										value="#{tipoTareaVista.tipoTareas}" var="tipoTarea" />
+								</p:selectOneMenu>
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="selectBooleanCheckbox-todoDia"
+								value="Todo el Día"
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<h:selectBooleanCheckbox id="selectBooleanCheckbox-todoDia"
+									value="#{tareaVista.tarea.allDay}" />
+							</div>
+						</div>
+
+						<div class="p-field p-grid">
+							<p:outputLabel for="inputTextArea-descripcion"
+								value="Descripción:"
+								styleClass="p-text-bold p-col-12 p-md-3 p-mb-md-0" />
+							<div class="p-col-12 p-md-9">
+								<p:inputTextarea id="inputTextArea-descripcion"
+									value="#{tareaVista.tarea.description}" required="true"
+									rows="3" cols="33" />
+							</div>
+
+						</div>
+					</div>
+
+					<div class="p-d-flex p-jc-between p-mt-3">
+						<p:commandButton id="commandButton-eliminar" value="Eliminar"
+							action="#{tareaVista.cmmdBtnEliminar}" icon="pi pi-trash"
+							update=":form-tarea:growl"
+							styleClass="p-text-bold ui-button-danger"
+							oncomplete="PF('wschedule').update();cerrarModal(PF('wdialog-tarea'), args);" />
+						<p:commandButton id="commandButton-guardar" icon="pi pi-save"
+							value="Guardar"
+							update=":form-tarea:panelGrid-tarea :form-tarea:growl"
+							action="#{tareaVista.cmmdBtnGuardar}"
+							oncomplete="PF('wschedule').update();cerrarModal(PF('wdialog-tarea'), args);" />
+					</div>
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>
