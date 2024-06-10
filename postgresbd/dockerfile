@@ -1,0 +1,7 @@
+# Usar la imagen oficial de PostgreSQL como imagen base
+FROM postgres:latest
+
+# Establecer variables de entorno para el nombre de la base de datos y las credenciales
+ENV POSTGRES_DB agendadb
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD root

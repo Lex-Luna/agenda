@@ -43,7 +43,7 @@ public class HibernateUtil {
 
 				Properties settings = new Properties();
 				settings.put(Environment.DRIVER, "org.postgresql.Driver");
-				settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/agendadb");
+				settings.put(Environment.URL, "jdbc:postgresql://AgendaBdContainer:5432/agendadb");
 				settings.put(Environment.USER, "postgres");
 				settings.put(Environment.PASS, "root");
 				settings.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
@@ -64,7 +64,9 @@ public class HibernateUtil {
 						.applySettings(configuration.getProperties()).build();
 
 				sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+				
 			} catch (Exception e) {
+				System.out.println("No se pudo conectar a la base de datos. Verifique la conexión y vuelva a intentarlo.");
 				e.printStackTrace();
 			}
 		}
